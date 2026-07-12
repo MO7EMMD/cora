@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>كأس العالم مباشر</title>
-  <meta name="description" content="موقع عربي لمتابعة مباريات كأس العالم مع جدول مباشر وروابط مشاهدة مرخّصة قابلة للتهيئة.">
+  <meta name="description" content="موقع عربي بسيط واحترافي لمتابعة مباريات كأس العالم مع تسجيل دخول وحساب شخصي وبيانات حية من API.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -12,76 +12,72 @@
 </head>
 <body>
   <div class="page-shell">
-    <header class="hero">
-      <nav class="topbar">
-        <div class="brand">
-          <span class="brand-mark">WC</span>
-          <div>
-            <p class="brand-title">كأس العالم مباشر</p>
-            <p class="brand-subtitle">نتائج حية ومشاهدة قانونية بجودة عالية</p>
-          </div>
-        </div>
-        <button id="refreshButton" class="ghost-button" type="button">تحديث المباريات</button>
-      </nav>
+    <nav class="navbar">
+      <a class="brand" href="#top">
+        <span class="brand-mark">WC</span>
+        <span class="brand-name">كأس العالم مباشر</span>
+      </a>
 
-      <section class="hero-grid">
-        <div class="hero-copy">
-          <span class="eyebrow">منصة مشاهدة مرخّصة</span>
-          <h1>تابع مباريات كأس العالم لحظة بلحظة من موقعك</h1>
-          <p>
-            يعرض الموقع جدول المباريات الحية ويفتح فقط البث المصرّح به من مزوّدك الرسمي مثل
-            FIFA+ أو YouTube الرسمي أو أي مزوّد تملك حق بثه.
-          </p>
-          <div class="hero-actions">
-            <a class="primary-button" href="#matches">ابدأ المشاهدة</a>
-            <a class="secondary-button" href="#setup">طريقة الربط</a>
-          </div>
-          <ul class="hero-highlights">
-            <li>توافق كامل مع العربية والجوال</li>
-            <li>يدعم API-Football وTheSportsDB</li>
-            <li>مشغل فيديو وروابط خارجية للبث المرخّص</li>
-          </ul>
-        </div>
+      <div class="nav-links">
+        <a href="#matches">المباريات</a>
+        <a href="#watch">المشاهدة</a>
+        <a href="#setup">حول الموقع</a>
+      </div>
 
-        <aside class="hero-panel">
-          <p class="panel-label">المباراة المختارة</p>
-          <h2 id="featuredTitle">بانتظار تحميل المباريات...</h2>
-          <p id="featuredMeta" class="muted">سيتم جلب آخر مباريات كأس العالم من مزوّد البيانات.</p>
-          <div class="score-strip">
-            <div>
-              <span class="strip-label">الحالة</span>
-              <strong id="featuredStatus">--</strong>
-            </div>
-            <div>
-              <span class="strip-label">النتيجة</span>
-              <strong id="featuredScore">--</strong>
-            </div>
-            <div>
-              <span class="strip-label">المصدر</span>
-              <strong id="featuredSource">--</strong>
-            </div>
-          </div>
-        </aside>
-      </section>
+      <div class="nav-auth">
+        <div id="guestActions" class="guest-actions">
+          <button id="loginNavBtn" class="btn btn-ghost" type="button">تسجيل الدخول</button>
+          <button id="signupNavBtn" class="btn btn-primary" type="button">إنشاء حساب</button>
+        </div>
+        <div id="userActions" class="user-actions hidden">
+          <span class="user-chip">
+            <span class="user-avatar" id="userAvatar">?</span>
+            <span id="userNameLabel">--</span>
+          </span>
+          <button id="logoutBtn" class="btn btn-ghost" type="button">تسجيل الخروج</button>
+        </div>
+        <button id="navToggle" class="nav-toggle" type="button" aria-label="القائمة">☰</button>
+      </div>
+    </nav>
+
+    <header class="hero" id="top">
+      <div class="hero-copy">
+        <span class="eyebrow">بث ونتائج مرخّصة فقط</span>
+        <h1>تابع مباريات كأس العالم بجودة عالية وبساطة تامة</h1>
+        <p>نتائج حيّة من API حقيقي، وواجهة عربية سريعة، مع حساب شخصي لحفظ تفضيلاتك.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#matches">شاهد المباريات</a>
+          <button id="heroSignupBtn" class="btn btn-outline btn-lg" type="button">إنشاء حساب مجاني</button>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <p class="panel-label">المباراة المختارة</p>
+        <h2 id="featuredTitle">جارٍ التحميل...</h2>
+        <p id="featuredMeta" class="muted">يتم جلب أحدث مباريات كأس العالم تلقائياً.</p>
+        <div class="score-strip">
+          <div><span class="strip-label">الحالة</span><strong id="featuredStatus">--</strong></div>
+          <div><span class="strip-label">النتيجة</span><strong id="featuredScore">--</strong></div>
+          <div><span class="strip-label">المصدر</span><strong id="featuredSource">--</strong></div>
+        </div>
+      </div>
     </header>
 
     <main class="content">
-      <section class="section-card player-section" id="watch">
+      <section class="section-card" id="watch">
         <div class="section-heading">
           <div>
             <span class="eyebrow">منطقة المشاهدة</span>
             <h2>مشغل المباراة</h2>
           </div>
-          <p class="muted">لن يتم تشغيل أي مباراة إلا من رابط بث مرخّص أو منصة رسمية مسموح بها.</p>
+          <p class="muted">يعرض فقط بثاً مرخّصاً أو رابطاً رسمياً معتمداً من مزوّد البث.</p>
         </div>
 
         <div class="player-grid">
-          <div class="player-stage">
-            <div id="playerFrame" class="player-frame empty-state">
-              <div>
-                <p class="empty-title">اختر مباراة من القائمة</p>
-                <p class="muted">إذا أضفت رابط بث رسمي في ملف الإعدادات سيظهر هنا تلقائياً.</p>
-              </div>
+          <div id="playerFrame" class="player-frame empty-state">
+            <div>
+              <p class="empty-title">اختر مباراة من القائمة أدناه</p>
+              <p class="muted">سجّل الدخول لحفظ آخر مباراة شاهدتها.</p>
             </div>
           </div>
 
@@ -100,10 +96,7 @@
             </div>
             <div class="sidebar-card legal-box">
               <p class="sidebar-title">تنبيه قانوني</p>
-              <p>
-                استخدم فقط الروابط أو المشغلات التي تملك حق استخدامها. بعض الجهات المالكة تمنع
-                التضمين داخل iframe وتسمح فقط بإعادة التوجيه إلى موقعها الرسمي.
-              </p>
+              <p>استخدم فقط روابط أو مشغلات تملك حق استخدامها.</p>
             </div>
           </aside>
         </div>
@@ -115,27 +108,73 @@
             <span class="eyebrow">الجدول المباشر</span>
             <h2>مباريات كأس العالم</h2>
           </div>
-          <p id="feedStatus" class="muted">جارٍ تحميل المباريات...</p>
+          <div class="heading-actions">
+            <p id="feedStatus" class="muted">جارٍ تحميل المباريات...</p>
+            <button id="refreshButton" class="btn btn-ghost" type="button">تحديث</button>
+          </div>
         </div>
         <div id="matchesGrid" class="matches-grid"></div>
       </section>
 
       <section class="section-card setup-grid" id="setup">
         <div>
-          <span class="eyebrow">إعداد سريع</span>
-          <h2>كيف تربط الموقع مع API ومصادر البث؟</h2>
+          <span class="eyebrow">كيف يعمل الموقع؟</span>
+          <h2>بيانات حية وحساب شخصي</h2>
         </div>
         <ol class="steps-list">
-          <li>افتح ملف <code>config.js</code> وضع مفتاح مزوّد بيانات المباريات.</li>
-          <li>اختر نوع المزود: <code>api-football</code> أو <code>thesportsdb</code>.</li>
-          <li>أضف روابط البث الرسمية داخل <code>streams</code> لكل مباراة أو لكل فريقين.</li>
-          <li>إذا كان مزود البث يمنع التضمين، اجعل النوع <code>external</code> لفتح الموقع الرسمي.</li>
+          <li>يتم جلب المباريات تلقائياً من <code>TheSportsDB API</code> دون أي إعداد إضافي.</li>
+          <li>أنشئ حساباً مجانياً لحفظ اسمك وتفضيلاتك على هذا الجهاز.</li>
+          <li>لإضافة بث رسمي مرخّص، عدّل <code>streams</code> داخل <code>config.js</code>.</li>
+          <li>لاستخدام مزوّد بيانات آخر (API-Football)، بدّل <code>dataProvider</code> في نفس الملف.</li>
         </ol>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <p>© كأس العالم مباشر — منصة عرض بيانات ومشاهدة مرخّصة فقط.</p>
+    </footer>
+  </div>
+
+  <div id="authOverlay" class="auth-overlay hidden">
+    <div class="auth-modal">
+      <button id="authClose" class="auth-close" type="button" aria-label="إغلاق">✕</button>
+
+      <div class="auth-tabs">
+        <button id="tabLogin" class="auth-tab active" type="button">تسجيل الدخول</button>
+        <button id="tabSignup" class="auth-tab" type="button">إنشاء حساب</button>
+      </div>
+
+      <form id="loginForm" class="auth-form">
+        <label>البريد الإلكتروني
+          <input type="email" id="loginEmail" required autocomplete="email">
+        </label>
+        <label>كلمة المرور
+          <input type="password" id="loginPassword" required autocomplete="current-password" minlength="6">
+        </label>
+        <p id="loginError" class="form-error hidden"></p>
+        <button class="btn btn-primary btn-block" type="submit">دخول</button>
+      </form>
+
+      <form id="signupForm" class="auth-form hidden">
+        <label>الاسم
+          <input type="text" id="signupName" required autocomplete="name">
+        </label>
+        <label>البريد الإلكتروني
+          <input type="email" id="signupEmail" required autocomplete="email">
+        </label>
+        <label>كلمة المرور
+          <input type="password" id="signupPassword" required autocomplete="new-password" minlength="6">
+        </label>
+        <p id="signupError" class="form-error hidden"></p>
+        <button class="btn btn-primary btn-block" type="submit">إنشاء الحساب</button>
+      </form>
+
+      <p class="auth-note">يتم حفظ الحساب محلياً في متصفحك فقط لأغراض العرض التجريبي.</p>
+    </div>
   </div>
 
   <script src="config.js"></script>
+  <script src="auth.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -291,3 +291,111 @@ async function loadMatches() {
 
 elements.refreshButton.addEventListener("click", loadMatches);
 loadMatches();
+initAuthUI();
+
+function initAuthUI() {
+  const guestActions = document.getElementById("guestActions");
+  const userActions = document.getElementById("userActions");
+  const userAvatar = document.getElementById("userAvatar");
+  const userNameLabel = document.getElementById("userNameLabel");
+
+  const overlay = document.getElementById("authOverlay");
+  const closeBtn = document.getElementById("authClose");
+  const tabLogin = document.getElementById("tabLogin");
+  const tabSignup = document.getElementById("tabSignup");
+  const loginForm = document.getElementById("loginForm");
+  const signupForm = document.getElementById("signupForm");
+  const loginError = document.getElementById("loginError");
+  const signupError = document.getElementById("signupError");
+
+  function refreshAuthUI() {
+    const user = window.WCAuth.getCurrentUser();
+    if (user) {
+      guestActions.classList.add("hidden");
+      userActions.classList.remove("hidden");
+      userNameLabel.textContent = user.name;
+      userAvatar.textContent = user.name.trim().charAt(0).toUpperCase() || "؟";
+    } else {
+      guestActions.classList.remove("hidden");
+      userActions.classList.add("hidden");
+    }
+  }
+
+  function openModal(tab) {
+    overlay.classList.remove("hidden");
+    switchTab(tab);
+  }
+
+  function closeModal() {
+    overlay.classList.add("hidden");
+    loginError.classList.add("hidden");
+    signupError.classList.add("hidden");
+    loginForm.reset();
+    signupForm.reset();
+  }
+
+  function switchTab(tab) {
+    const isLogin = tab === "login";
+    tabLogin.classList.toggle("active", isLogin);
+    tabSignup.classList.toggle("active", !isLogin);
+    loginForm.classList.toggle("hidden", !isLogin);
+    signupForm.classList.toggle("hidden", isLogin);
+  }
+
+  document.getElementById("loginNavBtn").addEventListener("click", () => openModal("login"));
+  document.getElementById("signupNavBtn").addEventListener("click", () => openModal("signup"));
+  document.getElementById("heroSignupBtn").addEventListener("click", () => openModal("signup"));
+  closeBtn.addEventListener("click", closeModal);
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay) closeModal();
+  });
+
+  tabLogin.addEventListener("click", () => switchTab("login"));
+  tabSignup.addEventListener("click", () => switchTab("signup"));
+
+  loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    loginError.classList.add("hidden");
+    try {
+      await window.WCAuth.login(
+        document.getElementById("loginEmail").value,
+        document.getElementById("loginPassword").value
+      );
+      refreshAuthUI();
+      closeModal();
+    } catch (error) {
+      loginError.textContent = error.message;
+      loginError.classList.remove("hidden");
+    }
+  });
+
+  signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    signupError.classList.add("hidden");
+    try {
+      await window.WCAuth.signup(
+        document.getElementById("signupName").value,
+        document.getElementById("signupEmail").value,
+        document.getElementById("signupPassword").value
+      );
+      refreshAuthUI();
+      closeModal();
+    } catch (error) {
+      signupError.textContent = error.message;
+      signupError.classList.remove("hidden");
+    }
+  });
+
+  document.getElementById("logoutBtn").addEventListener("click", () => {
+    window.WCAuth.logout();
+    refreshAuthUI();
+  });
+
+  const navToggle = document.getElementById("navToggle");
+  const navLinks = document.querySelector(".nav-links");
+  navToggle.addEventListener("click", () => {
+    navLinks.classList.toggle("show-mobile");
+  });
+
+  refreshAuthUI();
+}

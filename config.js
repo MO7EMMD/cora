@@ -3,13 +3,15 @@ window.WORLD_CUP_CONFIG = {
   timezone: "Asia/Riyadh",
   dataProvider: {
     type: "thesportsdb",
-    apiKey: "YOUR_API_KEY",
+    // مفتاح تجريبي عام ومجاني من TheSportsDB (لا يحتاج تسجيل). للاستخدام الموسّع
+    // احصل على مفتاح خاص من https://www.thesportsdb.com/api.php وضعه هنا.
+    apiKey: "3",
     // api-football example:
     // type: "api-football",
     // baseUrl: "https://v3.football.api-sports.io",
     // endpoint: "/fixtures?league=1&season=2026",
     baseUrl: "https://www.thesportsdb.com/api/v1/json",
-    endpoint: "/YOUR_API_KEY/eventsseason.php?id=4424&s=2026",
+    endpoint: "/YOUR_API_KEY/eventsseason.php?id=4429&s=2022",
     competitionName: "FIFA World Cup",
     requestHeaders: {
       // "x-apisports-key": "YOUR_API_KEY"
