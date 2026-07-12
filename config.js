@@ -28,19 +28,22 @@ window.WORLD_CUP_CONFIG = {
       venue: "ملعب نهائي كأس العالم",
       group: "النهائي",
       sourceLabel: "بيانات تجريبية"
-    },
-    {
-      id: "live-demo-channel",
-      homeTeam: "قناة تجريبية حية",
-      awayTeam: "اختبار تشغيل فعلي",
-      status: "مباشر الآن",
-      score: "—",
-      kickOff: new Date().toISOString(),
-      venue: "قناة عامة رسمية (NASA TV)",
-      group: "تجربة تقنية مباشرة",
-      sourceLabel: "بث حي حقيقي"
     }
   ],
+  // بطاقة ثابتة تظهر دائماً فوق قائمة المباريات (حقيقية كانت أو تجريبية) لإثبات أن
+  // نظام التوكن + التشغيل المتكيّف (HLS.js) يعمل فعلياً بالفيديو الحي على الموقع.
+  // هذه ليست مباراة كأس عالم حقيقية — إنها قناة تجريبية علنية ومرخّصة (NASA TV).
+  liveDemoChannel: {
+    id: "live-demo-channel",
+    homeTeam: "قناة تجريبية حية",
+    awayTeam: "اختبار تشغيل فعلي",
+    status: "مباشر الآن",
+    score: "—",
+    kickOff: new Date().toISOString(),
+    venue: "قناة عامة رسمية (NASA TV)",
+    group: "تجربة تقنية مباشرة — ليست مباراة",
+    sourceLabel: "بث حي حقيقي"
+  },
   streams: {
     "sample-final": {
       type: "external",

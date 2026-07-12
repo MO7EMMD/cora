@@ -21,7 +21,7 @@ async function fetchMatches() {
   const endpoint = provider.endpoint || "";
 
   if (!baseUrl || !endpoint || provider.apiKey === "YOUR_API_KEY") {
-    return normalizeMatches(config.fallbackMatches || [], "البيانات التجريبية");
+    return withLiveDemoChannel(normalizeMatches(config.fallbackMatches || [], "البيانات التجريبية"));
   }
 
   const url = buildProviderUrl(provider);
@@ -34,7 +34,13 @@ async function fetchMatches() {
   }
 
   const payload = await response.json();
-  return adaptProviderPayload(payload, provider);
+  return withLiveDemoChannel(adaptProviderPayload(payload, provider));
+}
+
+function withLiveDemoChannel(matches) {
+  if (!config.liveDemoChannel) return matches;
+  const demo = normalizeMatches([config.liveDemoChannel], config.liveDemoChannel.sourceLabel);
+  return [...demo, ...matches];
 }
 
 function buildProviderUrl(provider) {
