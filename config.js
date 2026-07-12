@@ -30,15 +30,15 @@ window.WORLD_CUP_CONFIG = {
       sourceLabel: "بيانات تجريبية"
     },
     {
-      id: "sample-semi",
-      homeTeam: "البرازيل",
-      awayTeam: "إسبانيا",
-      status: "قريباً",
-      score: "0 - 0",
-      kickOff: "2026-07-17T19:00:00Z",
-      venue: "استاد افتراضي",
-      group: "نصف النهائي",
-      sourceLabel: "بيانات تجريبية"
+      id: "live-demo-channel",
+      homeTeam: "قناة تجريبية حية",
+      awayTeam: "اختبار تشغيل فعلي",
+      status: "مباشر الآن",
+      score: "—",
+      kickOff: new Date().toISOString(),
+      venue: "قناة عامة رسمية (NASA TV)",
+      group: "تجربة تقنية مباشرة",
+      sourceLabel: "بث حي حقيقي"
     }
   ],
   streams: {
@@ -47,12 +47,12 @@ window.WORLD_CUP_CONFIG = {
       title: "شاهد من المنصة الرسمية",
       url: "https://www.plus.fifa.com/"
     },
-    "sample-semi": {
-      type: "embed",
-      title: "استبدل هذا الرابط ببث مرخّص",
-      embedUrl: "https://www.youtube.com/embed/jfKfPfyJRdk"
+    "live-demo-channel": {
+      type: "hls",
+      title: "بث مباشر فعلي (قناة NASA TV العامة) — لإثبات عمل نظام التوكن والتشغيل المتكيّف",
+      videoUrl: "https://ntv1.akamaized.net/hls/live/2014075/NASA-NTV1-HLS/master.m3u8"
     }
-    // مثال بث HLS مباشر بجودة عالية وبدون تقطيع (يتطلب رابط m3u8 مرخّص فعلياً):
+    // مثال بث HLS لمباراتك الخاصة بجودة عالية وبدون تقطيع (يتطلب رابط m3u8 مرخّص فعلياً):
     // "match-id": {
     //   type: "hls",
     //   title: "بث مباشر رسمي",

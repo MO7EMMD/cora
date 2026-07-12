@@ -234,7 +234,7 @@ function renderPlayer(match) {
 
   if (stream.type === "hls") {
     elements.playerFrame.className = "player-frame";
-    elements.playerFrame.innerHTML = `<video id="hlsVideo" controls playsinline autoplay></video>`;
+    elements.playerFrame.innerHTML = `<video id="hlsVideo" controls playsinline autoplay muted></video>`;
     mountHlsPlayer(stream.videoUrl);
     setStreamStatus(`${stream.title || "بث مباشر متكيّف"} • توكن حتى ${formatTokenExpiry(token)}`, "live");
     return;
