@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>كأس العالم مباشر</title>
+  <meta name="description" content="موقع عربي لمتابعة مباريات كأس العالم مع جدول مباشر وروابط مشاهدة مرخّصة قابلة للتهيئة.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <nav class="topbar">
+        <div class="brand">
+          <span class="brand-mark">WC</span>
+          <div>
+            <p class="brand-title">كأس العالم مباشر</p>
+            <p class="brand-subtitle">نتائج حية ومشاهدة قانونية بجودة عالية</p>
+          </div>
+        </div>
+        <button id="refreshButton" class="ghost-button" type="button">تحديث المباريات</button>
+      </nav>
+
+      <section class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">منصة مشاهدة مرخّصة</span>
+          <h1>تابع مباريات كأس العالم لحظة بلحظة من موقعك</h1>
+          <p>
+            يعرض الموقع جدول المباريات الحية ويفتح فقط البث المصرّح به من مزوّدك الرسمي مثل
+            FIFA+ أو YouTube الرسمي أو أي مزوّد تملك حق بثه.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#matches">ابدأ المشاهدة</a>
+            <a class="secondary-button" href="#setup">طريقة الربط</a>
+          </div>
+          <ul class="hero-highlights">
+            <li>توافق كامل مع العربية والجوال</li>
+            <li>يدعم API-Football وTheSportsDB</li>
+            <li>مشغل فيديو وروابط خارجية للبث المرخّص</li>
+          </ul>
+        </div>
+
+        <aside class="hero-panel">
+          <p class="panel-label">المباراة المختارة</p>
+          <h2 id="featuredTitle">بانتظار تحميل المباريات...</h2>
+          <p id="featuredMeta" class="muted">سيتم جلب آخر مباريات كأس العالم من مزوّد البيانات.</p>
+          <div class="score-strip">
+            <div>
+              <span class="strip-label">الحالة</span>
+              <strong id="featuredStatus">--</strong>
+            </div>
+            <div>
+              <span class="strip-label">النتيجة</span>
+              <strong id="featuredScore">--</strong>
+            </div>
+            <div>
+              <span class="strip-label">المصدر</span>
+              <strong id="featuredSource">--</strong>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </header>
+
+    <main class="content">
+      <section class="section-card player-section" id="watch">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">منطقة المشاهدة</span>
+            <h2>مشغل المباراة</h2>
+          </div>
+          <p class="muted">لن يتم تشغيل أي مباراة إلا من رابط بث مرخّص أو منصة رسمية مسموح بها.</p>
+        </div>
+
+        <div class="player-grid">
+          <div class="player-stage">
+            <div id="playerFrame" class="player-frame empty-state">
+              <div>
+                <p class="empty-title">اختر مباراة من القائمة</p>
+                <p class="muted">إذا أضفت رابط بث رسمي في ملف الإعدادات سيظهر هنا تلقائياً.</p>
+              </div>
+            </div>
+          </div>
+
+          <aside class="player-sidebar">
+            <div class="sidebar-card">
+              <p class="sidebar-title">حالة البث</p>
+              <p id="streamStatus" class="status-pill neutral">لا يوجد بث محدد</p>
+            </div>
+            <div class="sidebar-card">
+              <p class="sidebar-title">تفاصيل المباراة</p>
+              <dl id="matchDetails" class="details-list">
+                <div><dt>الفريقان</dt><dd>--</dd></div>
+                <div><dt>الوقت</dt><dd>--</dd></div>
+                <div><dt>الملعب</dt><dd>--</dd></div>
+              </dl>
+            </div>
+            <div class="sidebar-card legal-box">
+              <p class="sidebar-title">تنبيه قانوني</p>
+              <p>
+                استخدم فقط الروابط أو المشغلات التي تملك حق استخدامها. بعض الجهات المالكة تمنع
+                التضمين داخل iframe وتسمح فقط بإعادة التوجيه إلى موقعها الرسمي.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section-card" id="matches">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">الجدول المباشر</span>
+            <h2>مباريات كأس العالم</h2>
+          </div>
+          <p id="feedStatus" class="muted">جارٍ تحميل المباريات...</p>
+        </div>
+        <div id="matchesGrid" class="matches-grid"></div>
+      </section>
+
+      <section class="section-card setup-grid" id="setup">
+        <div>
+          <span class="eyebrow">إعداد سريع</span>
+          <h2>كيف تربط الموقع مع API ومصادر البث؟</h2>
+        </div>
+        <ol class="steps-list">
+          <li>افتح ملف <code>config.js</code> وضع مفتاح مزوّد بيانات المباريات.</li>
+          <li>اختر نوع المزود: <code>api-football</code> أو <code>thesportsdb</code>.</li>
+          <li>أضف روابط البث الرسمية داخل <code>streams</code> لكل مباراة أو لكل فريقين.</li>
+          <li>إذا كان مزود البث يمنع التضمين، اجعل النوع <code>external</code> لفتح الموقع الرسمي.</li>
+        </ol>
+      </section>
+    </main>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
