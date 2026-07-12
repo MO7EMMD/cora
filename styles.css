@@ -498,6 +498,43 @@ code {
   border-radius: 8px;
 }
 
+/* News (SerpApi) */
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.news-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.news-card a {
+  color: #eaf2ff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.news-card a:hover {
+  text-decoration: underline;
+}
+
+.news-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.news-card span {
+  font-size: 0.78rem;
+  color: var(--primary);
+}
+
 .site-footer {
   margin-top: 24px;
   text-align: center;

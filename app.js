@@ -12,7 +12,10 @@ const elements = {
   playerFrame: document.getElementById("playerFrame"),
   streamStatus: document.getElementById("streamStatus"),
   matchDetails: document.getElementById("matchDetails"),
-  refreshButton: document.getElementById("refreshButton")
+  refreshButton: document.getElementById("refreshButton"),
+  newsSection: document.getElementById("news"),
+  newsGrid: document.getElementById("newsGrid"),
+  newsStatus: document.getElementById("newsStatus")
 };
 
 async function fetchMatches() {
@@ -367,8 +370,55 @@ async function loadMatches() {
   }
 }
 
+// أخبار المباريات عبر SerpApi — تعمل فقط عند تفعيل newsSearch.enabled + proxyUrl
+// في config.js (راجع serverless/serpapi-proxy.js للتفاصيل). لا يتم استدعاء SerpApi
+// مباشرة من المتصفح إطلاقاً؛ يتم الاستدعاء عبر وسيط خادم يحمي مفتاح API.
+async function loadMatchNews() {
+  const newsConfig = config.newsSearch || {};
+  if (!newsConfig.enabled || !newsConfig.proxyUrl) {
+    elements.newsSection?.classList.add("hidden");
+    return;
+  }
+
+  elements.newsSection.classList.remove("hidden");
+  elements.newsStatus.textContent = "جارٍ تحميل الأخبار...";
+
+  try {
+    const requestUrl = new URL(newsConfig.proxyUrl);
+    requestUrl.searchParams.set("q", newsConfig.query || "FIFA World Cup news");
+
+    const response = await fetch(requestUrl.toString());
+    if (!response.ok) throw new Error(`proxy_error_${response.status}`);
+
+    const data = await response.json();
+    const results = data.results || [];
+
+    if (!results.length) {
+      elements.newsGrid.innerHTML = "";
+      elements.newsStatus.textContent = "لا توجد أخبار متاحة حالياً.";
+      return;
+    }
+
+    elements.newsGrid.innerHTML = results
+      .map(
+        (item) => `
+          <article class="news-card">
+            <a href="${escapeAttribute(item.link)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a>
+            <p>${escapeHtml(item.snippet || "")}</p>
+            <span>${escapeHtml(item.source || "")}</span>
+          </article>
+        `
+      )
+      .join("");
+    elements.newsStatus.textContent = `آخر تحديث: ${new Intl.DateTimeFormat("ar", { timeStyle: "short", timeZone: config.timezone || "UTC" }).format(new Date())}`;
+  } catch (error) {
+    elements.newsStatus.textContent = "تعذر تحميل الأخبار حالياً.";
+  }
+}
+
 elements.refreshButton.addEventListener("click", loadMatches);
 loadMatches();
+loadMatchNews();
 initAuthUI();
 
 function rerenderPlayerForAuthChange() {
