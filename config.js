@@ -52,5 +52,11 @@ window.WORLD_CUP_CONFIG = {
       title: "استبدل هذا الرابط ببث مرخّص",
       embedUrl: "https://www.youtube.com/embed/jfKfPfyJRdk"
     }
+    // مثال بث HLS مباشر بجودة عالية وبدون تقطيع (يتطلب رابط m3u8 مرخّص فعلياً):
+    // "match-id": {
+    //   type: "hls",
+    //   title: "بث مباشر رسمي",
+    //   videoUrl: "https://your-licensed-provider.example.com/live/stream.m3u8"
+    // }
   }
 };

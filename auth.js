@@ -63,10 +63,12 @@ async function login(email, password) {
 
 function setSession(emailKey) {
   localStorage.setItem(AUTH_SESSION_KEY, emailKey);
+  issueViewerToken(emailKey);
 }
 
 function logout() {
   localStorage.removeItem(AUTH_SESSION_KEY);
+  localStorage.removeItem(AUTH_TOKEN_KEY);
 }
 
 function getCurrentUser() {
@@ -77,4 +79,60 @@ function getCurrentUser() {
   return users[key] || null;
 }
 
-window.WCAuth = { signup, login, logout, getCurrentUser };
+// --- توكن المشاهدة ---
+// توكن جلسة قصير الصلاحية يُصدر فقط بعد تسجيل دخول ناجح، ويستخدمه المشغل
+// كشرط لفتح البث المرخّص. لا علاقة له بأي مفاتيح فك تشفير لمواقع بث مقرصنة.
+const AUTH_TOKEN_KEY = "wc_viewer_token";
+const TOKEN_TTL_MS = 4 * 60 * 60 * 1000; // 4 ساعات
+
+function generateTokenId() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return Array.from(crypto.getRandomValues(new Uint8Array(16)))
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+function issueViewerToken(emailKey) {
+  const token = {
+    value: generateTokenId(),
+    subject: emailKey,
+    issuedAt: Date.now(),
+    expiresAt: Date.now() + TOKEN_TTL_MS
+  };
+  localStorage.setItem(AUTH_TOKEN_KEY, JSON.stringify(token));
+  return token;
+}
+
+function getViewerToken() {
+  try {
+    const token = JSON.parse(localStorage.getItem(AUTH_TOKEN_KEY));
+    if (!token) return null;
+
+    const user = getCurrentUser();
+    if (!user || token.subject !== user.email) return null;
+
+    if (Date.now() > token.expiresAt) {
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      return null;
+    }
+
+    return token;
+  } catch (error) {
+    return null;
+  }
+}
+
+function refreshViewerToken() {
+  const user = getCurrentUser();
+  if (!user) return null;
+  return issueViewerToken(user.email);
+}
+
+window.WCAuth = {
+  signup,
+  login,
+  logout,
+  getCurrentUser,
+  getViewerToken,
+  refreshViewerToken
+};

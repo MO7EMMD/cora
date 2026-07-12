@@ -1,4 +1,5 @@
 const config = window.WORLD_CUP_CONFIG || {};
+let currentMatch = null;
 
 const elements = {
   matchesGrid: document.getElementById("matchesGrid"),
@@ -156,6 +157,7 @@ function renderMatches(matches) {
     `;
 
     card.querySelector(".card-button").addEventListener("click", () => {
+      currentMatch = match;
       setFeaturedMatch(match);
       renderPlayer(match);
     });
@@ -163,6 +165,7 @@ function renderMatches(matches) {
     elements.matchesGrid.appendChild(card);
 
     if (index === 0) {
+      currentMatch = match;
       setFeaturedMatch(match);
       renderPlayer(match);
     }
@@ -189,6 +192,26 @@ function setFeaturedMatch(match) {
 
 function renderPlayer(match) {
   const stream = getStreamForMatch(match);
+  const token = window.WCAuth.getViewerToken();
+
+  if (!token) {
+    elements.playerFrame.className = "player-frame empty-state";
+    elements.playerFrame.innerHTML = `
+      <div>
+        <p class="empty-title">سجّل الدخول للحصول على توكن المشاهدة</p>
+        <p class="muted">التوكن مجاني وفوري، ويثبت أن جلستك مصرّح لها بمشاهدة البث المرخّص.</p>
+        <p><button class="btn btn-primary" type="button" id="playerLoginPrompt">تسجيل الدخول</button></p>
+      </div>
+    `;
+    setStreamStatus("بانتظار توكن المشاهدة", "neutral");
+    const promptBtn = document.getElementById("playerLoginPrompt");
+    if (promptBtn) {
+      promptBtn.addEventListener("click", () => {
+        document.getElementById("loginNavBtn")?.click();
+      });
+    }
+    return;
+  }
 
   if (!stream) {
     elements.playerFrame.className = "player-frame empty-state";
@@ -198,14 +221,22 @@ function renderPlayer(match) {
         <p class="muted">أضف رابطاً رسمياً داخل config.js لعرضه هنا.</p>
       </div>
     `;
-    setStreamStatus("لا يوجد بث محدد", "neutral");
+    setStreamStatus(`توكن نشط حتى ${formatTokenExpiry(token)}`, "neutral");
     return;
   }
 
   if (stream.type === "embed") {
     elements.playerFrame.className = "player-frame";
     elements.playerFrame.innerHTML = `<iframe src="${escapeAttribute(stream.embedUrl)}" title="${escapeAttribute(stream.title || "البث المرخّص")}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-    setStreamStatus(stream.title || "بث مضمن مرخّص", "live");
+    setStreamStatus(`${stream.title || "بث مضمن مرخّص"} • توكن حتى ${formatTokenExpiry(token)}`, "live");
+    return;
+  }
+
+  if (stream.type === "hls") {
+    elements.playerFrame.className = "player-frame";
+    elements.playerFrame.innerHTML = `<video id="hlsVideo" controls playsinline autoplay></video>`;
+    mountHlsPlayer(stream.videoUrl);
+    setStreamStatus(`${stream.title || "بث مباشر متكيّف"} • توكن حتى ${formatTokenExpiry(token)}`, "live");
     return;
   }
 
@@ -217,7 +248,7 @@ function renderPlayer(match) {
         المتصفح لا يدعم تشغيل هذا البث.
       </video>
     `;
-    setStreamStatus(stream.title || "بث فيديو مرخّص", "live");
+    setStreamStatus(`${stream.title || "بث فيديو مرخّص"} • توكن حتى ${formatTokenExpiry(token)}`, "live");
     return;
   }
 
@@ -230,7 +261,7 @@ function renderPlayer(match) {
         <p><a class="primary-button" target="_blank" rel="noreferrer" href="${escapeAttribute(stream.url)}">فتح المنصة الرسمية</a></p>
       </div>
     `;
-    setStreamStatus("يفتح في موقع رسمي خارجي", "external");
+    setStreamStatus(`يفتح في موقع رسمي خارجي • توكن حتى ${formatTokenExpiry(token)}`, "external");
     return;
   }
 
@@ -238,10 +269,51 @@ function renderPlayer(match) {
   elements.playerFrame.innerHTML = `
     <div>
       <p class="empty-title">نوع البث غير مدعوم</p>
-      <p class="muted">استخدم embed أو video أو external داخل ملف الإعدادات.</p>
+      <p class="muted">استخدم embed أو hls أو video أو external داخل ملف الإعدادات.</p>
     </div>
   `;
   setStreamStatus("صيغة بث غير معروفة", "neutral");
+}
+
+function formatTokenExpiry(token) {
+  const date = new Date(token.expiresAt);
+  return new Intl.DateTimeFormat("ar", {
+    timeStyle: "short",
+    timeZone: config.timezone || "UTC"
+  }).format(date);
+}
+
+let activeHls = null;
+
+function mountHlsPlayer(streamUrl) {
+  const video = document.getElementById("hlsVideo");
+  if (!video || !streamUrl) return;
+
+  if (activeHls) {
+    activeHls.destroy();
+    activeHls = null;
+  }
+
+  // تشغيل متكيّف الجودة (Adaptive Bitrate) لتقليل التقطيع مقارنة بالتشغيل المباشر للرابط.
+  if (window.Hls && window.Hls.isSupported()) {
+    activeHls = new window.Hls({
+      maxBufferLength: 30,
+      maxMaxBufferLength: 60,
+      liveSyncDurationCount: 3
+    });
+    activeHls.loadSource(streamUrl);
+    activeHls.attachMedia(video);
+    activeHls.on(window.Hls.Events.ERROR, (event, data) => {
+      if (data.fatal) {
+        setStreamStatus("حدث خطأ في البث المباشر، جارٍ إعادة المحاولة...", "neutral");
+        activeHls.startLoad();
+      }
+    });
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = streamUrl;
+  } else {
+    setStreamStatus("المتصفح لا يدعم تشغيل هذا النوع من البث المباشر", "neutral");
+  }
 }
 
 function setStreamStatus(text, kind) {
@@ -293,6 +365,10 @@ elements.refreshButton.addEventListener("click", loadMatches);
 loadMatches();
 initAuthUI();
 
+function rerenderPlayerForAuthChange() {
+  if (currentMatch) renderPlayer(currentMatch);
+}
+
 function initAuthUI() {
   const guestActions = document.getElementById("guestActions");
   const userActions = document.getElementById("userActions");
@@ -319,6 +395,7 @@ function initAuthUI() {
       guestActions.classList.remove("hidden");
       userActions.classList.add("hidden");
     }
+    rerenderPlayerForAuthChange();
   }
 
   function openModal(tab) {

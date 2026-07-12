@@ -123,9 +123,9 @@
         </div>
         <ol class="steps-list">
           <li>يتم جلب المباريات تلقائياً من <code>TheSportsDB API</code> دون أي إعداد إضافي.</li>
-          <li>أنشئ حساباً مجانياً لحفظ اسمك وتفضيلاتك على هذا الجهاز.</li>
-          <li>لإضافة بث رسمي مرخّص، عدّل <code>streams</code> داخل <code>config.js</code>.</li>
-          <li>لاستخدام مزوّد بيانات آخر (API-Football)، بدّل <code>dataProvider</code> في نفس الملف.</li>
+          <li>أنشئ حساباً مجانياً لحفظ اسمك، وستحصل تلقائياً على <strong>توكن مشاهدة</strong> صالح لمدة 4 ساعات لفتح المشغل.</li>
+          <li>لإضافة بث رسمي مرخّص، عدّل <code>streams</code> داخل <code>config.js</code> (يدعم <code>embed</code> و<code>hls</code> و<code>video</code> و<code>external</code>).</li>
+          <li>نوع <code>hls</code> يشغّل تقنية Adaptive Bitrate عبر hls.js لتقليل التقطيع في البث المباشر بجودة عالية.</li>
         </ol>
       </section>
     </main>
@@ -173,6 +173,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
   <script src="config.js"></script>
   <script src="auth.js"></script>
   <script src="app.js"></script>
